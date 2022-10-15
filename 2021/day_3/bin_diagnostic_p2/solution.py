@@ -8,43 +8,70 @@ for line in f.readlines():
 
 f.close()
 
+# Calculate the oxygen generator rating
+def oxygen_generator_rating(bins):
+    candidates = bins
+    length = len(bins[0])
 
-# Calculate the most common bit in each column for the resulting
-# number.
-def calculate(t, bins):
-    res = []
-    size = bins[0]
-    for i in range(len(size)):
+    for i in range(length):
+        # In the ith position, calculate the most common bit
         ones = 0
         zeros = 0
-        for j in range(len(bins)):
-            if bins[j][i] == '1':
+        for n in candidates:
+            if n[i] == '1':
                 ones += 1
-            elif bins[j][i] == '0':
+            else:
                 zeros += 1
         
+        winner = '1' if ones >= zeros else '0'
 
-        if ones > zeros:
-            if t == 'gamma':
-                res.append('1')
-            elif t == 'epsilon':
-                res.append('0')
-        else:
-            if t == 'gamma':
-                res.append('0')
-            elif t == 'epsilon':
-                res.append('1')
+        # Then, iterate through the candidates and only choose those who
+        # has the winner in the ith position
+        safe = []
+        for n in candidates:
+            if n[i] == winner:
+                safe.append(n)
+        
+        candidates = safe
 
-    return ''.join(res)
+    return candidates[0]
 
-gam = calculate('gamma', bins)
-ep = calculate('epsilon', bins)
+# Calculate the co2 scrubber rating
+def co2_scrubber_rating(bins):
+    candidates = bins
+    length = len(bins[0])
 
-n1 = int(gam, 2)
-n2 = int(ep, 2)
+    for i in range(length):
+        if len(candidates) == 1:
+            return candidates[0]
+        
+        # In the ith position, calculate the least common bit
+        ones = 0
+        zeros = 0
+        for n in candidates:
+            if n[i] == '1':
+                ones += 1
+            else:
+                zeros += 1
+        
+        winner = '0' if zeros <= ones else '1'
 
-print(n1)
-print(n2)
+        # Then, iterate through the candidates and only choose those who
+        # has the winner in the ith position
+        safe = []
+        for n in candidates:
+            if n[i] == winner:
+                safe.append(n)
+        
+        candidates = safe
+    print(candidates)
+    return
 
-# Result
-print(n1 * n2)
+
+ogr = int(oxygen_generator_rating(bins), 2)
+csr = int(co2_scrubber_rating(bins), 2)
+print(ogr)
+print(csr)
+
+life_support = ogr * csr
+print('answer:', life_support) # the answer
