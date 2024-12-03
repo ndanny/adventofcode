@@ -49,6 +49,42 @@ print(f'Safe reports: {safe_reports}')
 """
 Part 2
 
+- Bruteforce approach.
+- Check the report after attempting to remove every level.
+- At the end, if no combo works, then don't count that report.
+"""
+
+safe_reports = 0
+
+def check_report_brute(levels):
+    if check_report(levels):
+        return True
+
+    for i in range(len(levels)):
+        # Remove levels[i] and check the report.
+        if check_report(levels[:i] + levels[i+1:]):
+            return True
+
+    return False
+
+with open(input_path) as file:
+    for report in file:
+        levels = list(map(int, report.split(' ')))
+
+        if len(levels) < 2:
+            safe_reports += 1
+            continue
+
+        if check_report_brute(levels):
+            safe_reports += 1
+
+print(f'Safe reports with at most one removal (bruteforce): {safe_reports}')
+
+
+"""
+Part 2 (monotonic stack) - Unfinished
+
+- More optimal than the brute-force for large report sizes.
 - Criteria: we can remove at most one level from the report to make it safe.
 - Use a monotonic stack approach (https://www.hellointerview.com/learn/code/stack/monotonic-stack).
 """
@@ -114,14 +150,7 @@ def check_report_v2(levels: list[int]) -> bool:
     # Calculate x-indices way until we see the next inc/dec number.
     inc = next_greater(levels)
     dec = next_smaller(levels)
-    inc_valid = is_valid(levels, inc)
-    dec_valid = is_valid(levels, dec)
-
-    # print("for", levels, ":")
-    # print("\tIncreasing:", inc, inc_valid)
-    # print("\tDecreasing:", dec, dec_valid)
-
-    return inc_valid or dec_valid
+    return is_valid(levels, inc) or is_valid(levels, dec)
 
 with open(input_path) as file:
     for report in file:
@@ -134,4 +163,4 @@ with open(input_path) as file:
         if check_report_v2(levels):
             safe_reports += 1
 
-print(f'Safe reports with at most one removal: {safe_reports}')
+print(f'Safe reports with at most one removal (monotonic stack): {safe_reports}')
