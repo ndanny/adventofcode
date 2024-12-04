@@ -54,3 +54,66 @@ for i in range(len(matrix)):
             result += count_xmas(i, j, matrix)
 
 print('Part 1:', result)
+
+"""
+Part 2
+
+- The approach is similar to part 1. We can iterate over the matrix and find
+the next 'A' character.
+- Once found, test if its diagonal ends are 'M' and 'S', either forward or backward.
+- If the condition is True, then increment the counter.
+
+Ans: 1939
+"""
+result = 0
+
+def count_xmas_v2(i: int, j: int, matrix: list[list[int]]) -> bool:
+    def in_bounds(row, col):
+        if row < 0 or row >= len(matrix) or col < 0 or col >= len(matrix[0]):
+            return False
+        return True
+
+    # Handle the top-left and bottom-right.
+    top_left = (-1, -1)
+    bottom_right = (1, 1)
+    chars = set()
+
+    if in_bounds(i + top_left[0], j + top_left[1]):
+        chars.add(matrix[i + top_left[0]][j + top_left[1]])
+    else:
+        return False
+
+    if in_bounds(i + bottom_right[0], j + bottom_right[1]):
+        chars.add(matrix[i + bottom_right[0]][j + bottom_right[1]])
+    else:
+        return False
+
+    if chars != {'M', 'S'}:
+        return False
+
+    # Handle the top-right and bottom-left.
+    top_right = (-1, 1)
+    bottom_left = (1, -1)
+    chars = set()
+
+    if in_bounds(i + top_right[0], j + top_right[1]):
+        chars.add(matrix[i + top_right[0]][j + top_right[1]])
+    else:
+        return False
+
+    if in_bounds(i + bottom_left[0], j + bottom_left[1]):
+        chars.add(matrix[i + bottom_left[0]][j + bottom_left[1]])
+    else:
+        return False
+
+    if chars != {'M', 'S'}:
+        return False
+
+    return True
+
+for i in range(len(matrix)):
+    for j in range(len(matrix)):
+        if matrix[i][j] == 'A' and count_xmas_v2(i, j, matrix):
+            result += 1
+
+print('Part 2:', result)
