@@ -1,6 +1,9 @@
 """
 Part 1
 
+- Build a mapping for the rules of numbers before and numbers after a certain element.
+- Run a double-for loop across the list of nums and use the rules to determine correctness.
+
 Ans: 5762
 """
 from pathlib import Path
@@ -58,10 +61,31 @@ print('Part 1:', result)
 """
 Part 2
 
-- <Add notes here>
+- For each incorrect update, run the reorder() function on it.
+    - reorder() will construct a new list. It adds each n from nums into the list and
+    propagates it back until it meets rule.
+- In the end, all elems should be in their correct spot.
 
-Ans: XXX
+Ans: 4130
 """
 
 result = 0
+
+def reorder(nums: list[int]) -> list[int]:
+    result = []
+    for n in nums:
+        result.append(n)
+        ptr = len(result) - 1
+        while ptr > 0 and result[ptr] in pages_before[result[ptr - 1]]:
+            result[ptr], result[ptr - 1] = result[ptr - 1], result[ptr]
+            ptr -= 1
+
+    return result
+
+for nums in updates:
+    if not is_correct_order(nums):
+        reordered = reorder(nums)
+        mid_idx = len(nums) // 2
+        result += reordered[mid_idx]
+
 print('Part 2:', result)
