@@ -1,9 +1,7 @@
 """
 Part 1
 
-- <Add notes here>
-
-Ans: XXX
+Ans: 1399219271639
 """
 from pathlib import Path
 
@@ -11,9 +9,30 @@ input_path = Path(__file__).parent / '../input/input.txt'
 
 result = 0
 
+def is_valid(test_value: int, nums: list[int]) -> bool:
+    combos = [nums[0]]
+
+    for i in range(1, len(nums)):
+        temp = []
+        for c in combos:
+            temp.append(nums[i] * c)
+            temp.append(nums[i] + c)
+        combos = temp
+
+    for num in combos:
+        if num == test_value:
+            return True
+
+    return False
+
 with open(input_path) as file:
     for line in file:
-        pass
+        test_value, nums = line.split(": ")
+        test_value = int(test_value)
+        nums = [int(n) for n in nums.split(" ")]
+
+        if is_valid(test_value, nums):
+            result += test_value
 
 print('Part 1:', result)
 
