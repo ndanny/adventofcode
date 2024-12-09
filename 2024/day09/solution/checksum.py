@@ -61,10 +61,62 @@ print('Part 1:', checksum)
 """
 Part 2
 
-- <Add notes here>
-
 Ans: XXX
 """
+from collections import deque
 
-result = 0
-print('Part 2:', result)
+id = 0
+expanded = []
+queue = deque([])
+
+for i in range(len(disk_map)):
+    count = int(disk_map[i])
+    if i % 2 == 0:
+        for _ in range(count):
+            expanded.append(str(id))
+        queue.append({'type': 'file', 'id': id, 'count': count})
+        id += 1
+    else:
+        for _ in range(count):
+            expanded.append('.')
+        queue.append({'type': 'null', 'count': count})
+
+data = []
+while queue:
+    node = queue.popleft()
+    count = node['count']
+    if node['type'] == 'file':
+       id = node['id']
+       for _ in range(count):
+           data.append(id)
+    else:
+        ptr = len(queue) - 1
+        while ptr >= 0:
+            if queue[ptr]['type'] == 'file' and queue[ptr]['count'] <= count:
+                break
+            ptr -= 1
+
+        if ptr < 0:
+            for _ in range(count):
+                data.append('.')
+            continue
+
+        to_move = queue[ptr]
+        queue[ptr] = {'type': 'null', 'count': to_move['count']}
+
+        for _ in range(to_move['count']):
+            data.append(to_move['id'])
+        for _ in range(count - to_move['count']):
+            queue.appendleft({'type': 'null', 'count': count - to_move['count']})
+
+print(data)
+
+checksum = 0
+for i in range(len(data)):
+    if data[i] == '.':
+        continue
+    else:
+        checksum += (data[i] * i)
+
+
+print('Part 2:', checksum)
